@@ -1,0 +1,32 @@
+{
+  "name": "starname-generator",
+  "version": "1.0.0",
+  "description": "Generate random real-world star names (IAU/Wikipedia list)",
+  "license": "ISC",
+  "keywords": [
+    "astronomy",
+    "stars",
+    "random",
+    "name",
+    "generator"
+  ],
+  "author": "Dwight Chen",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "starname-gen": "src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dwightchen/starname-generator"
+  },
+  "scripts": {
+
+    "test": "node test/starname-generator.test.js",
+    "build:fresh": "node src/build-fresh.mjs"
+  },
+  "dependencies": {
+    "cheerio": "^1.1.0",
+    "node-fetch": "^3.3.2"
+  }
+}
