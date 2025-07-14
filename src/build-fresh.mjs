@@ -20,11 +20,14 @@ const names = [];
  * We grab every <tr> inside every .wikitable.sortable and take the first <td>.
  */
 $('table.wikitable.sortable tbody tr').each((_, tr) => {
-  const firstCell = $(tr).find('td').first();
-  if (!firstCell.length) return;        // skip header rows
+  const cells = $(tr).find('td');
+  if (cells.length < 3) return;        // skip header rows or incomplete rows
+
+  // Get the third column (index 2) which contains the star name
+  const starNameCell = cells.eq(2);
 
   // Remove footnote markers like “Achird [a]” or “Adhara [15]”
-  const name = firstCell.text().replace(/\[\w+?]/g, '').trim();
+  const name = starNameCell.text().replace(/\[\w+?]/g, '').trim();
 
   // Rows that aren’t IAU-approved have a †; skip them.
   if (name && !name.endsWith('†')) names.push(name);

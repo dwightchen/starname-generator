@@ -21,9 +21,9 @@
     "url": "https://github.com/dwightchen/starname-generator"
   },
   "scripts": {
-
     "test": "node test/starname-generator.test.js",
-    "build:fresh": "node src/build-fresh.mjs"
+    "build:fresh": "node src/build-fresh.mjs",
+    "build:constellations": "node src/build-constellations.mjs"
   },
   "dependencies": {
     "cheerio": "^1.1.0",

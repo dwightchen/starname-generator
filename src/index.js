@@ -14,10 +14,54 @@
  */
 
 import starNames from './starData.js';
+import constellationNames from './constellationData.js';
 
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
+
+/**
+ * Return one random constellation name.
+ * @returns {string}
+ */
+export function randomConstellation() {
+  return constellationNames[Math.floor(Math.random() * constellationNames.length)];
+}
+
+/**
+ * Return an array of `count` random constellation names.
+ *
+ * @param {number}  count   How many names to return (default = 1)
+ * @param {boolean} unique  If true, do not repeat names (throws if
+ *                          count > available names)
+ * @returns {string[]}
+ */
+export function randomConstellationList(count = 1, unique = true) {
+  if (!Number.isInteger(count) || count < 1) {
+    throw new TypeError('`count` must be a positive integer');
+  }
+
+  if (!unique) {
+    // allow repeats – faster path
+    return Array.from({ length: count }, () => randomConstellation());
+  }
+
+  // For unique names, ensure no duplicates (constellation names are already unique)
+  if (count > constellationNames.length) {
+    throw new RangeError(
+      `Requested ${count} unique names, but only ${constellationNames.length} constellation names available`
+    );
+  }
+
+  // unique draw from the constellation names
+  const pool = [...constellationNames];
+  const out = [];
+  while (out.length < count) {
+    const idx = Math.floor(Math.random() * pool.length);
+    out.push(pool.splice(idx, 1)[0]);
+  }
+  return out;
+}
 
 /**
  * Return one random star name.
@@ -67,7 +111,7 @@ export function randomStarList(count = 1, unique = true) {
 // ---------------------------------------------------------------------------
 // CLI execution (node src/index.js 5)
 // ---------------------------------------------------------------------------
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
   const arg = process.argv[2] ?? '1';
   const howMany = Number.parseInt(arg, 10);
 
