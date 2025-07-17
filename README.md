@@ -135,5 +135,7 @@ starname-generator/
 
 ## License
 
-MIT © 2025 Your Name
+MIT © 2025 Dwight Chen
+
+This module is freely available for use under the [MIT License](./LICENSE.txt).
 
