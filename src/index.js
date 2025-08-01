@@ -138,3 +138,14 @@ if (import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
     console.log(randomStarList(howMany).join('\n'));
   })();
 }
+
+let starNamesJson, constellationNamesJson;
+try {
+  // This will only work in Node.js ≥20 or with a bundler that supports import assertions
+  starNamesJson = (await import('./starData.json', { assert: { type: 'json' } })).default;
+  constellationNamesJson = (await import('./constellationData.json', { assert: { type: 'json' } })).default;
+} catch {
+  // If not supported, these will remain undefined
+}
+
+export { starNamesJson as starNames, constellationNamesJson as constellationNames };

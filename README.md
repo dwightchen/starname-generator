@@ -83,30 +83,35 @@ All functions throw `TypeError` for invalid arguments and `RangeError` when you 
 
 ## Usage Notes
 
+### Accessing the Data Directly
+
+This package now supports **direct importing of the star and constellation name arrays** in environments that support [ESM JSON import assertions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#json_modules) (Node.js ≥ 20, modern browsers, or with a compatible bundler).
+
+**Example:**
+```js
+import { starNames, constellationNames } from 'starname-generator';
+
+console.log(starNames); // ["Sirius", "Vega", ...]
+console.log(constellationNames); // ["Orion", "Cassiopeia", ...]
+```
+- `starNames` and `constellationNames` are arrays of strings, not JSON strings.
+- If your environment does not support ESM JSON imports, these exports will be `undefined` and you should use the async API (`await init()`).
+
 ### Why is there an `await init()` step?
 
-To support both Node.js and browser environments, this package loads its star and constellation data asynchronously from JSON files. Before you can use any of the random name functions, you must call and `await init()`. This ensures the data is loaded and available, preventing errors or undefined results.
+To support both Node.js and browser environments, this package loads its star and constellation data asynchronously from JSON files when direct import is not available. Before you can use any of the random name functions, you must call and `await init()`. This ensures the data is loaded and available, preventing errors or undefined results.
 
 **Example:**
 ```js
 import { init, randomStar } from 'starname-generator';
 
-await init(); // Must be called before using randomStar()
+await init(); // Must be called before using randomStar() if not using direct import
 console.log(randomStar());
 ```
 
 ### Can I avoid the `await init()` step?
 
-If your environment supports [ESM JSON imports with import assertions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#json_modules) (Node.js ≥ 20, modern browsers, or with a bundler like Vite/Webpack), you can import the `.json` files directly for synchronous access, eliminating the need for `init()`. For maximum compatibility, the default package uses the async loader.
-
-**If you want to use direct JSON imports:**
-- Replace the async loader in `starData.js` and `constellationData.js` with:
-  ```js
-  import starNames from './starData.json' assert { type: 'json' };
-  import constellationNames from './constellationData.json' assert { type: 'json' };
-  ```
-- Update your code to use the imported arrays directly.
-- This approach is not supported in all environments, so check your runtime or bundler documentation.
+If your environment supports direct ESM JSON imports, you can use the `starNames` and `constellationNames` exports synchronously, and do not need to call `init()`.
 
 ---
 
