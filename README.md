@@ -1,26 +1,19 @@
 # starname-generator
 
-> **Generate random star names and constellation names fromThe lists in `src/starData.json` and `src/constellationData.json` are pulled from the Wikipedia article **"List of proper names of stars"** (revision **11 July 2025**):
+> **Generate random, real star names and constellation names from the complete IAU / WGSN catalogue**
+
+The lists in `src/starData.json` and `src/constellationData.json` are pulled from the Wikipedia article **"List of proper names of stars"** (revision **11 July 2025**):
 
 - **Star names**: extracted from the *Modern proper name* column (505 names)
-- **Constellation names**: extracted from the *Constellation* column, deduplicated (78 unique names)the complete IAU / WGSN catalogue**
+- **Constellation names**: extracted from the *Constellation* column, deduplicated (78 unique names)
 
-`starname-generator` is a tiny JavaScript / Node package that returns one‑liner access to every officially recognised modern proper star name—\*all 505 of them, as of the IAU Working Group on Star Names (WGSN) list dated \****11 July 2025***—plus the 78 constellation names where those stars are located.
+`starname-generator` is a tiny JavaScript / Node package that returns one‑liner access to every officially recognised modern proper star name—*all 505 of them, as of the IAU Working Group on Star Names (WGSN) list dated **11 July 2025***—plus the 78 constellation names where those stars are located.
 
 - **📚 Accurate** – dataset scraped directly from the latest Wikipedia table that mirrors the IAU list
 - **🪶 Lightweight** – < 12 kB JSON payload total
 - **⚡️ Zero‑dependency CLI & API** – Node ≥ 18 and modern ESM bundlers
 - **🔄 Easy to update** – one command refreshes the JSON when new stars are approved
-- **🌌 Stars + Constellations** – Generate both individual star names and constellation names-generator
-
-> **Generate random, real star names from the complete IAU / WGSN catalogue**
-
-`starname-generator` is a tiny JavaScript / Node package that returns one‑liner access to every officially recognised modern proper star name—\*all 505 of them, as of the IAU Working Group on Star Names (WGSN) list dated \****11 July 2025***.
-
-- **📚 Accurate** – dataset scraped directly from the latest Wikipedia table that mirrors the IAU list
-- **🪶 Lightweight** – < 8 kB JSON payload
-- **⚡️ Zero‑dependency CLI & API** – Node ≥ 18 and modern ESM bundlers
-- **🔄 Easy to update** – one command refreshes the JSON when new stars are approved
+- **🌌 Stars + Constellations** – Generate both individual star names and constellation names
 
 ---
 
@@ -46,7 +39,9 @@ npx starname-generator 5
 ## Quick start (programmatic)
 
 ```js
-import { randomStar, randomStarList, randomConstellation, randomConstellationList } from 'starname-generator';
+import { init, randomStar, randomStarList, randomConstellation, randomConstellationList } from 'starname-generator';
+
+await init(); // <-- You must call and await this before using any random* function
 
 // Generate star names
 console.log(randomStar());           // "Vega"
@@ -62,21 +57,27 @@ console.log(randomConstellationList(3)); // [ "Cassiopeia", "Ursa Major", "Draco
 
 ## API Reference
 
+### Initialization
+
+| Function      | Returns   | Notes                                                                                      |
+| ------------- | --------- | ------------------------------------------------------------------------------------------ |
+| `init()`      | `Promise` | **Must be called and awaited before using any random* function.** Loads star/constellation data. |
+
 ### Star Functions
 
 | Function                               | Returns    | Notes                                                                                                                                                                                                   |
 | -------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `randomStar()`                         | `string`   | One random star name.                                                                                                                                                                                   |
-| `randomStarList(count = 1, unique = true)` | `string[]` | • `count` must be a positive integer.• When `unique` is `true` (default), duplicates are prevented and the function throws if `count` > 505.• When `unique` is `false`, names may repeat (faster path). |
+| `randomStar()`                         | `string`   | One random star name. Throws if `init()` was not called.                                                                                                         |
+| `randomStarList(count = 1, unique = true)` | `string[]` | • `count` must be a positive integer. <br>• When `unique` is `true` (default), duplicates are prevented and the function throws if `count` > 505.<br>• When `unique` is `false`, names may repeat.      |
 
 ### Constellation Functions
 
 | Function                               | Returns    | Notes                                                                                                                                                                                                   |
 | -------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `randomConstellation()`                | `string`   | One random constellation name.                                                                                                                                                                          |
-| `randomConstellationList(count = 1, unique = true)` | `string[]` | • `count` must be a positive integer.• When `unique` is `true` (default), duplicates are prevented and the function throws if `count` > 78.• When `unique` is `false`, names may repeat (faster path). |
+| `randomConstellation()`                | `string`   | One random constellation name. Throws if `init()` was not called.                                                                                                |
+| `randomConstellationList(count = 1, unique = true)` | `string[]` | • `count` must be a positive integer. <br>• When `unique` is `true` (default), duplicates are prevented and the function throws if `count` > 78.<br>• When `unique` is `false`, names may repeat.       |
 
-Both functions throw `TypeError` for invalid arguments and `RangeError` when you request more unique names than exist.
+All functions throw `TypeError` for invalid arguments and `RangeError` when you request more unique names than exist.
 
 ---
 
@@ -113,7 +114,7 @@ starname-generator/
 ├── README.md        ← you are here
 └── src
     ├── starData.json          ← 505‑element array of star names
-    ├── starData.js            ← tiny loader for star names JSON
+    ├── starData.js            ← universal loader for star names JSON
     ├── constellationData.json ← 78‑element array of constellation names  
     ├── constellationData.js   ← tiny loader for constellation names JSON
     ├── build-fresh.mjs        ← scraper to regenerate star names JSON
