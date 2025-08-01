@@ -81,6 +81,35 @@ All functions throw `TypeError` for invalid arguments and `RangeError` when you 
 
 ---
 
+## Usage Notes
+
+### Why is there an `await init()` step?
+
+To support both Node.js and browser environments, this package loads its star and constellation data asynchronously from JSON files. Before you can use any of the random name functions, you must call and `await init()`. This ensures the data is loaded and available, preventing errors or undefined results.
+
+**Example:**
+```js
+import { init, randomStar } from 'starname-generator';
+
+await init(); // Must be called before using randomStar()
+console.log(randomStar());
+```
+
+### Can I avoid the `await init()` step?
+
+If your environment supports [ESM JSON imports with import assertions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#json_modules) (Node.js ≥ 20, modern browsers, or with a bundler like Vite/Webpack), you can import the `.json` files directly for synchronous access, eliminating the need for `init()`. For maximum compatibility, the default package uses the async loader.
+
+**If you want to use direct JSON imports:**
+- Replace the async loader in `starData.js` and `constellationData.js` with:
+  ```js
+  import starNames from './starData.json' assert { type: 'json' };
+  import constellationNames from './constellationData.json' assert { type: 'json' };
+  ```
+- Update your code to use the imported arrays directly.
+- This approach is not supported in all environments, so check your runtime or bundler documentation.
+
+---
+
 ## Dataset provenance
 
 The list in `src/starData.json` is pulled from the Wikipedia article **“List of proper names of stars”** (revision **11 July 2025**) whose first column is the *Modern proper name* recognised by the IAU WGSN.
