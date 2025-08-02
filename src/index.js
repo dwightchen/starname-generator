@@ -3,28 +3,37 @@
  * starname-generator / src/index.js
  *
  * Public API + tiny CLI.
- * Depends on `starData.js`, which exports an array containing the full
- * 505-entry IAU/WGSN star-name catalogue loaded from starData.json.
+ * Depends on `starData.js`, which exports an async function to load
+ * the full 505-entry IAU/WGSN star-name catalogue from starData.json.
  *
  * Usage (programmatic):
- *   import { random, randomList } from 'starname-generator';
+ *   import { init, randomStar, randomStarList } from 'starname-generator';
  *
  * Usage (CLI):
  *   npx starname-generator 10
  */
 
-import starNames from './starData.js';
-import constellationNames from './constellationData.js';
+import getStarNames from './starData.js';
+import getConstellationNames from './constellationData.js';
 
-// ---------------------------------------------------------------------------
-// Public API
-// ---------------------------------------------------------------------------
+let starNames = [];
+let constellationNames = [];
+
+/**
+ * Initialize star and constellation data.
+ * Must be called (and awaited) before using any random* function.
+ */
+export async function init() {
+  starNames = await getStarNames();
+  constellationNames = await getConstellationNames();
+}
 
 /**
  * Return one random constellation name.
  * @returns {string}
  */
 export function randomConstellation() {
+  if (!constellationNames.length) throw new Error('Call init() before using randomConstellation()');
   return constellationNames[Math.floor(Math.random() * constellationNames.length)];
 }
 
@@ -37,6 +46,7 @@ export function randomConstellation() {
  * @returns {string[]}
  */
 export function randomConstellationList(count = 1, unique = true) {
+  if (!constellationNames.length) throw new Error('Call init() before using randomConstellationList()');
   if (!Number.isInteger(count) || count < 1) {
     throw new TypeError('`count` must be a positive integer');
   }
@@ -68,6 +78,7 @@ export function randomConstellationList(count = 1, unique = true) {
  * @returns {string}
  */
 export function randomStar() {
+  if (!starNames.length) throw new Error('Call init() before using randomStar()');
   return starNames[Math.floor(Math.random() * starNames.length)];
 }
 
@@ -80,6 +91,7 @@ export function randomStar() {
  * @returns {string[]}
  */
 export function randomStarList(count = 1, unique = true) {
+  if (!starNames.length) throw new Error('Call init() before using randomStarList()');
   if (!Number.isInteger(count) || count < 1) {
     throw new TypeError('`count` must be a positive integer');
   }
@@ -120,5 +132,20 @@ if (import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
     process.exit(1);
   }
 
-  console.log(randomStarList(howMany).join('\n'));
+  // Ensure data is loaded before generating names
+  (async () => {
+    await init();
+    console.log(randomStarList(howMany).join('\n'));
+  })();
 }
+
+let starNamesJson, constellationNamesJson;
+try {
+  // This will only work in Node.js ≥20 or with a bundler that supports import assertions
+  starNamesJson = (await import('./starData.json', { assert: { type: 'json' } })).default;
+  constellationNamesJson = (await import('./constellationData.json', { assert: { type: 'json' } })).default;
+} catch {
+  // If not supported, these will remain undefined
+}
+
+export { starNamesJson as starNames, constellationNamesJson as constellationNames };
