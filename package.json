@@ -1,6 +1,6 @@
 {
   "name": "starname-generator",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Generate random real-world star names (IAU/Wikipedia list)",
   "license": "ISC",
   "keywords": [
@@ -15,7 +15,7 @@
   "type": "module",
   "main": "src/index.js",
   "bin": {
-    "starname-gen": "src/index.js"
+    "starname-gen": "src/cli.js"
   },
   "repository": {
     "type": "git",

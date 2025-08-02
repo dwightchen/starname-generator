@@ -2,15 +2,14 @@
 /**
  * starname-generator / src/index.js
  *
- * Public API + tiny CLI.
+ * Public API (browser & Node) – no CLI code here!
  * Depends on `starData.js`, which exports an async function to load
  * the full 505-entry IAU/WGSN star-name catalogue from starData.json.
  *
  * Usage (programmatic):
  *   import { init, randomStar, randomStarList } from 'starname-generator';
  *
- * Usage (CLI):
- *   npx starname-generator 10
+ * For CLI usage, see src/cli.js
  */
 
 import getStarNames from './starData.js';
@@ -121,24 +120,8 @@ export function randomStarList(count = 1, unique = true) {
 }
 
 // ---------------------------------------------------------------------------
-// CLI execution (node src/index.js 5)
+// Direct JSON imports for environments that support import assertions
 // ---------------------------------------------------------------------------
-if (import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
-  const arg = process.argv[2] ?? '1';
-  const howMany = Number.parseInt(arg, 10);
-
-  if (!Number.isInteger(howMany) || howMany < 1) {
-    console.error('Usage: starname-gen <positive integer>');
-    process.exit(1);
-  }
-
-  // Ensure data is loaded before generating names
-  (async () => {
-    await init();
-    console.log(randomStarList(howMany).join('\n'));
-  })();
-}
-
 let starNamesJson, constellationNamesJson;
 try {
   // This will only work in Node.js ≥20 or with a bundler that supports import assertions
