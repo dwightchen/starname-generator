@@ -15,7 +15,7 @@
   "type": "module",
   "main": "src/index.js",
   "bin": {
-    "starname-gen": "src/index.js"
+    "starname-gen": "src/cli.js"
   },
   "repository": {
     "type": "git",
